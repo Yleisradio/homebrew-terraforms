@@ -54,7 +54,7 @@ chtf_use() {
     export PATH="$CHTF_CURRENT:$PATH"
 }
 
-chft_list() (
+chtf_list() (
     # Avoid glob matching errors.
     # Note that we do this in a subshell to restrict the scope.
     # bash
@@ -80,7 +80,7 @@ chtf() {
             echo "chtf: $CHTF_VERSION"
             ;;
         "")
-            chft_list
+            chtf_list
             ;;
         system)
             chtf_reset
