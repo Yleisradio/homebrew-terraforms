@@ -14,7 +14,10 @@ Install the `chtf` helper:
 
 Add the following to the ~/.bashrc or ~/.zshrc file:
 
-    source /usr/local/share/chtf/chtf.sh
+    # Source chtf
+    if [[ -f /usr/local/share/chtf/chtf.sh ]]; then
+        source "/usr/local/share/chtf/chtf.sh"
+    fi
 
 Then select the wanted Terraform version to use with `chtf`.
 
