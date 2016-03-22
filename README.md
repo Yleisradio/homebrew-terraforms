@@ -1,6 +1,6 @@
-# Homebrew Casks for Terraform versions
+# chtf - Terraform version switcher
 
-This repository includes Homebrew Casks to install multiple Terraform versions (since 0.6.6) at the same time, and a `chtf` helper to specify which one to use.
+This repository includes Homebrew Casks to install multiple Terraform versions (since 0.6.6) at the same time, and a `chtf` helper to specify which one to use. `chtf` also installs the specified version automatically if needed.
 
 ## Usage
 
