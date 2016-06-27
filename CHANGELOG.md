@@ -1,3 +1,7 @@
+# 1.1.0 / 2016-06-27
+
+* Fix the `CASKROOM` default location [GH-2]
+
 # 1.0.1 / 2016-01-22
 
 * Fix the `chtf.sh` script name
