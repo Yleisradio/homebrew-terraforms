@@ -1,3 +1,7 @@
+# 1.1.1 / 2016-06-27
+
+* Fix the `CASKROOM` path when listing Terraform versions
+
 # 1.1.0 / 2016-06-27
 
 * Fix the `CASKROOM` default location [GH-2]

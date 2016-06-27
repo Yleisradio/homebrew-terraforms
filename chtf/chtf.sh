@@ -20,7 +20,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-CHTF_VERSION='1.1.0'
+CHTF_VERSION='1.1.1'
 : ${CASKROOM:=/usr/local/Caskroom}
 
 chtf_reset() {
@@ -62,7 +62,7 @@ chtf_list() (
     # zsh
     setopt null_glob 2>/dev/null || true
 
-    for dir in "/opt/homebrew-cask/Caskroom"/terraform-*/*; do
+    for dir in "$CASKROOM"/terraform-*/*; do
         if [[ "$dir" == "$CHTF_CURRENT" ]]; then
             echo " * $(basename "$dir")"
         else
