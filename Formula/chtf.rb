@@ -1,8 +1,8 @@
 class Chtf < Formula
   desc 'Terraform version switcher'
   homepage 'https://github.com/Yleisradio/homebrew-terraforms#readme'
-  url 'https://github.com/Yleisradio/homebrew-terraforms/archive/v1.0.1.tar.gz'
-  sha256 'b26c8dba23fe4d7486cdb07e6c5cd2224d7072001b7aca05803fbcd86f2fa6b4'
+  url 'https://github.com/Yleisradio/homebrew-terraforms/archive/v1.1.1.tar.gz'
+  sha256 '5a3648e5e032607962c7565acd613593303e3f33fdd3e874cc2246f08cd1115f'
 
   head 'https://github.com/Yleisradio/homebrew-terraforms.git'
 
