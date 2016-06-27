@@ -21,7 +21,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 CHTF_VERSION='1.0.0'
-: ${CASKROOM:=/opt/homebrew-cask/Caskroom}
+: ${CASKROOM:=/usr/local/Caskroom}
 
 chtf_reset() {
     [[ -z "$CHTF_CURRENT" ]] && return
