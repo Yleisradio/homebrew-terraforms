@@ -31,6 +31,7 @@ chtf_reset() {
     hash -r
 
     unset CHTF_CURRENT
+    unset CHTF_CURRENT_TERRAFORM_VERSION
 }
 
 chtf_install() {
