@@ -1,3 +1,8 @@
+# 1.2.1 / 2016-09-26
+
+* Reset `CHTF_CURRENT_TERRAFORM_VERSION` on `chtf system`
+* Exit faster if `brew install` fails
+
 # 1.2.0 / 2016-09-26
 
 * Add `CHTF_CURRENT_TERRAFORM_VERSION` variable for easy access to the currently selected version number [GH-3]
