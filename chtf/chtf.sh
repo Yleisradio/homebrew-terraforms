@@ -51,6 +51,7 @@ chtf_use() {
     [[ -n "$CHTF_CURRENT" ]] && chtf_reset
 
     export CHTF_CURRENT="$tf_path"
+    export CHTF_CURRENT_TERRAFORM_VERSION="$1"
     export PATH="$CHTF_CURRENT:$PATH"
 }
 
