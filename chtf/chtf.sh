@@ -42,7 +42,7 @@ chtf_install() {
 chtf_use() {
     local tf_path="$CASKROOM/terraform-$1/$1"
 
-    [[ -d "$tf_path" ]] || chtf_install "$1"
+    [[ -d "$tf_path" ]] || chtf_install "$1" || return 1
 
     if [[ ! -x "$tf_path/terraform" ]]; then
         echo "chtf: $tf_path/terraform not executable" >&2
