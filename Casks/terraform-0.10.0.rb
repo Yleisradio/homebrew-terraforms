@@ -1,6 +1,6 @@
-cask 'terraform-0.8.8' do
-  version '0.8.8'
-  sha256 '55ab547539e68c9375c144062460457fcfdb3f5b9f412d3bb162f73298602d78'
+cask 'terraform-0.10.0' do
+  version '0.10.0'
+  sha256 '1584dc21ad5ac1dc0d9a2876542a85d092778d00a0622622c28f8740abadddb9'
 
   url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_amd64.zip"
   name 'Terraform'
