@@ -78,7 +78,7 @@ end
 
 function usage
     echo 'usage: chtf [<version> | system]'
-    exit 1
+    return 1
 end
 
 function chtf
