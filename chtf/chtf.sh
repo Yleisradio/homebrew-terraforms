@@ -20,7 +20,8 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-CHTF_VERSION='1.2.1'
+# load version
+source $(dirname $BASH_SOURCE)/version.env
 : ${CASKROOM:=/usr/local/Caskroom}
 
 chtf_reset() {
