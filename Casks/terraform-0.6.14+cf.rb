@@ -5,5 +5,4 @@ cask 'terraform-0.6.14+cf' do
   url "https://homebrew-terraforms.s3.amazonaws.com/terraform_0.6.14%2Bcf_darwin_amd64.zip"
   name 'Terraform'
   homepage 'https://www.terraform.io/'
-  license :mpl
 end

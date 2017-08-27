@@ -5,5 +5,4 @@ cask 'terraform-0.9.3' do
   url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_amd64.zip"
   name 'Terraform'
   homepage 'https://www.terraform.io/'
-  license :mpl
 end
