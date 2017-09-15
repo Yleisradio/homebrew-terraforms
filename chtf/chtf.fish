@@ -19,7 +19,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-set VERSION_FILE (cd (dirname (status -f)); and pwd)/version.env
+set VERSION_FILE (dirname (status --current-filename))/version.env
 set -g CHTF_VERSION (string split "=" (head -1 $VERSION_FILE))[2]
 test -n "$CASKROOM"; or set -g CASKROOM '/usr/local/Caskroom'
 
