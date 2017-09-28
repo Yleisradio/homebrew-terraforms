@@ -19,8 +19,9 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-set CHTF_VERSION (string split "=" (head -1 (dirname (status --current-filename))/version.env))[2]
-test -n "$CASKROOM"; or set CASKROOM '/usr/local/Caskroom'
+set VERSION_FILE (dirname (status --current-filename))/version.env
+set -g CHTF_VERSION (string split "=" (head -1 $VERSION_FILE))[2]
+test -n "$CASKROOM"; or set -g CASKROOM '/usr/local/Caskroom'
 
 function chtf_reset
     if test -z $CHTF_CURRENT
