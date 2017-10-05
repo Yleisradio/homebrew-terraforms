@@ -21,7 +21,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # load version
-VERSION_FILE="$(dirname "${BASH_SOURCE[0]}")"/VERSION
+VERSION_FILE="$(dirname "$0")/VERSION"
 CHTF_VERSION="$(cat "$VERSION_FILE")"
 : "${CASKROOM:=/usr/local/Caskroom}"
 
