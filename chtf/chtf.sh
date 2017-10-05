@@ -22,8 +22,8 @@
 
 # load version
 VERSION_FILE="$(dirname "${BASH_SOURCE[0]}")"/VERSION
-CHTF_VERSION="$(cat $VERSION_FILE)"
-: ${CASKROOM:=/usr/local/Caskroom}
+CHTF_VERSION="$(cat "$VERSION_FILE")"
+: "${CASKROOM:=/usr/local/Caskroom}"
 
 chtf_reset() {
     [[ -z "$CHTF_CURRENT" ]] && return
