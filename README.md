@@ -21,6 +21,15 @@ if [[ -f /usr/local/share/chtf/chtf.sh ]]; then
 fi
 ```
 
+If you are using fish add the following into ~/.config/fish/config.fish:
+
+```fish
+# Source chtf
+if test -f /usr/local/share/chtf/chtf.fish
+    source /usr/local/share/chtf/chtf.fish
+end
+```
+
 Then select the wanted Terraform version to use with `chtf`.
 
     chtf 0.6.9
