@@ -1,3 +1,7 @@
+# 1.3.0 / _Not released yet_
+
+* Add support for the fish shell [GH-14]
+
 # 1.2.1 / 2016-09-26
 
 * Reset `CHTF_CURRENT_TERRAFORM_VERSION` on `chtf system`

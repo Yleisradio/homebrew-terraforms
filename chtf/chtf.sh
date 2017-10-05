@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2016 Hal Brodigan
-# Copyright (c) 2016 Yleisradio Oy
+# Copyright (c) 2016-2017 Yleisradio Oy
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
