@@ -20,9 +20,6 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# load version
-VERSION_FILE="$(dirname "$0")/VERSION"
-CHTF_VERSION="$(cat "$VERSION_FILE")"
 : "${CASKROOM:=/usr/local/Caskroom}"
 
 chtf_reset() {
@@ -75,13 +72,23 @@ chtf_list() (
     done;
 )
 
+chtf_root_dir() {
+    if [[ -n "$BASH" ]]; then
+        dirname "${BASH_SOURCE[0]}"
+    elif [[ -n "$ZSH_NAME" ]]; then
+        dirname "${(%):-%x}"
+    else
+        echo 'chtf: [WARN] Unknown shell' >&2
+    fi
+}
+
 chtf() {
     case "$1" in
         -h|--help)
             echo "usage: chtf [VERSION | system]"
             ;;
         -V|--version)
-            echo "chtf: $CHTF_VERSION"
+            echo "chtf: ${CHTF_VERSION:-[unknown version]}"
             ;;
         "")
             chtf_list
@@ -94,3 +101,6 @@ chtf() {
             ;;
     esac
 }
+
+# Load and store the version number
+CHTF_VERSION=$(cat "$(chtf_root_dir)/VERSION" 2>/dev/null)
