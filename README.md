@@ -32,7 +32,7 @@ end
 
 Then select the wanted Terraform version to use with `chtf`.
 
-    chtf 0.6.9
+    chtf 0.11.3
 
 You can also just install a specific Terraform version (but you'll need to use `chtf` or adjust `PATH` yourself to use it):
 
