@@ -77,11 +77,6 @@ function chtf_list
     end
 end
 
-function usage
-    echo 'usage: chtf [<version> | system]'
-    return 1
-end
-
 function chtf
     # Fish treats empty list as a nonexistent value
     #  this means we can't use empty value as a switch argument
@@ -93,7 +88,7 @@ function chtf
 
     switch $argv[1]
         case '-h' or '--help'
-            usage
+            echo 'usage: chtf [<version> | system]'
         case '-V' or '--version'
             echo "chtf: $CHTF_VERSION"
         case 'system'
