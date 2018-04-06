@@ -23,7 +23,7 @@ set VERSION_FILE (dirname (status --current-filename))/VERSION
 set -g CHTF_VERSION (cat $VERSION_FILE)
 test -n "$CASKROOM"; or set -g CASKROOM '/usr/local/Caskroom'
 
-function chtf_reset
+function _chtf_reset
     if test -z $CHTF_CURRENT
         return
     end
@@ -40,16 +40,16 @@ function chtf_reset
     set -e CHTF_CURRENT_TERRAFORM_VERSION
 end
 
-function chtf_install
+function _chtf_install
    echo "chtf: Installing Terraform version $argv[1]"
    brew cask install "terraform-$argv[1]"
  end
 
-function chtf_use
+function _chtf_use
     set TF_VERSION $argv[1]
     set TF_PATH "$CASKROOM/terraform-$TF_VERSION/$TF_VERSION"
     if not test -d "$TF_PATH"
-        chtf_install "$TF_VERSION" or return 1
+        _chtf_install "$TF_VERSION" or return 1
     end
 
     if not test -x "$TF_PATH/terraform"
@@ -58,7 +58,7 @@ function chtf_use
     end
 
     if test -n $CHTF_CURRENT
-        chtf_reset
+        _chtf_reset
     end
 
     set -gx CHTF_CURRENT "$TF_PATH"
@@ -66,7 +66,7 @@ function chtf_use
     set -x PATH "$CHTF_CURRENT" $PATH
 end
 
-function chtf_list
+function _chtf_list
     for dir in "$CASKROOM"/terraform-*/*
         set TF_VERSION (basename "$dir")
         if [ "$dir" = "$CHTF_CURRENT" ]
@@ -82,7 +82,7 @@ function chtf
     #  this means we can't use empty value as a switch argument
     #  so check for an empty value in advance
     if test -z $argv[1]
-        chtf_list
+        _chtf_list
         return
     end
 
@@ -92,8 +92,8 @@ function chtf
         case '-V' or '--version'
             echo "chtf: $CHTF_VERSION"
         case 'system'
-            chtf_reset
+            _chtf_reset
         case '*'
-            chtf_use "$argv[1]"
+            _chtf_use "$argv[1]"
     end
 end

@@ -22,7 +22,7 @@
 
 : "${CASKROOM:=/usr/local/Caskroom}"
 
-chtf_reset() {
+_chtf_reset() {
     [[ -z "$CHTF_CURRENT" ]] && return
 
     PATH=":$PATH:"; PATH="${PATH//:$CHTF_CURRENT:/:}"
@@ -33,29 +33,29 @@ chtf_reset() {
     unset CHTF_CURRENT_TERRAFORM_VERSION
 }
 
-chtf_install() {
+_chtf_install() {
     echo "chtf: Installing Terraform version $1"
     brew cask install "terraform-$1"
 }
 
-chtf_use() {
+_chtf_use() {
     local tf_path="$CASKROOM/terraform-$1/$1"
 
-    [[ -d "$tf_path" ]] || chtf_install "$1" || return 1
+    [[ -d "$tf_path" ]] || _chtf_install "$1" || return 1
 
     if [[ ! -x "$tf_path/terraform" ]]; then
         echo "chtf: $tf_path/terraform not executable" >&2
         return 1
     fi
 
-    [[ -n "$CHTF_CURRENT" ]] && chtf_reset
+    [[ -n "$CHTF_CURRENT" ]] && _chtf_reset
 
     export CHTF_CURRENT="$tf_path"
     export CHTF_CURRENT_TERRAFORM_VERSION="$1"
     export PATH="$CHTF_CURRENT:$PATH"
 }
 
-chtf_list() (
+_chtf_list() (
     # Avoid glob matching errors.
     # Note that we do this in a subshell to restrict the scope.
     # bash
@@ -72,7 +72,7 @@ chtf_list() (
     done;
 )
 
-chtf_root_dir() {
+_chtf_root_dir() {
     if [[ -n "$BASH" ]]; then
         dirname "${BASH_SOURCE[0]}"
     elif [[ -n "$ZSH_NAME" ]]; then
@@ -91,16 +91,16 @@ chtf() {
             echo "chtf: ${CHTF_VERSION:-[unknown version]}"
             ;;
         "")
-            chtf_list
+            _chtf_list
             ;;
         system)
-            chtf_reset
+            _chtf_reset
             ;;
         *)
-            chtf_use "$1"
+            _chtf_use "$1"
             ;;
     esac
 }
 
 # Load and store the version number
-CHTF_VERSION=$(cat "$(chtf_root_dir)/VERSION" 2>/dev/null)
+CHTF_VERSION=$(cat "$(_chtf_root_dir)/VERSION" 2>/dev/null)
