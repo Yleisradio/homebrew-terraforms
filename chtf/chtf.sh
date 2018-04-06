@@ -1,5 +1,5 @@
 # Copyright (c) 2012-2016 Hal Brodigan
-# Copyright (c) 2016-2017 Yleisradio Oy
+# Copyright (c) 2016-2018 Yleisradio Oy
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -22,8 +22,28 @@
 
 : "${CASKROOM:=/usr/local/Caskroom}"
 
+chtf() {
+    case "$1" in
+        -h|--help)
+            echo "usage: chtf [VERSION | system]"
+            ;;
+        -V|--version)
+            echo "chtf: ${CHTF_VERSION:-[unknown version]}"
+            ;;
+        "")
+            _chtf_list
+            ;;
+        system)
+            _chtf_reset
+            ;;
+        *)
+            _chtf_use "$1"
+            ;;
+    esac
+}
+
 _chtf_reset() {
-    [[ -z "$CHTF_CURRENT" ]] && return
+    [[ -z "$CHTF_CURRENT" ]] && return 0
 
     PATH=":$PATH:"; PATH="${PATH//:$CHTF_CURRENT:/:}"
     PATH="${PATH#:}"; PATH="${PATH%:}"
@@ -48,7 +68,7 @@ _chtf_use() {
         return 1
     fi
 
-    [[ -n "$CHTF_CURRENT" ]] && _chtf_reset
+    _chtf_reset
 
     export CHTF_CURRENT="$tf_path"
     export CHTF_CURRENT_TERRAFORM_VERSION="$1"
@@ -80,26 +100,6 @@ _chtf_root_dir() {
     else
         echo 'chtf: [WARN] Unknown shell' >&2
     fi
-}
-
-chtf() {
-    case "$1" in
-        -h|--help)
-            echo "usage: chtf [VERSION | system]"
-            ;;
-        -V|--version)
-            echo "chtf: ${CHTF_VERSION:-[unknown version]}"
-            ;;
-        "")
-            _chtf_list
-            ;;
-        system)
-            _chtf_reset
-            ;;
-        *)
-            _chtf_use "$1"
-            ;;
-    esac
 }
 
 # Load and store the version number

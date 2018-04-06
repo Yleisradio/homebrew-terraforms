@@ -1,4 +1,5 @@
 # Copyright (c) 2017 Alex Kulbii
+# Copyright (c) 2018 Yleisradio Oy
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -19,81 +20,72 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-set VERSION_FILE (dirname (status --current-filename))/VERSION
-set -g CHTF_VERSION (cat $VERSION_FILE)
+# Load and store the version number
+set -l chtf_version_file (dirname (status --current-filename))/VERSION
+set -g CHTF_VERSION (cat $chtf_version_file)
+
 test -n "$CASKROOM"; or set -g CASKROOM '/usr/local/Caskroom'
 
-function _chtf_reset
-    if test -z $CHTF_CURRENT
-        return
+function chtf
+    switch "$argv[1]"
+        case '-h' or '--help'
+            echo 'usage: chtf [<version> | system]'
+        case '-V' or '--version'
+            echo "chtf: $CHTF_VERSION"
+        case ''
+            _chtf_list
+        case 'system'
+            _chtf_reset
+        case '*'
+            _chtf_use "$argv[1]"
     end
+end
 
-    set PATHS_COUNT (count $PATH)
-    for i in (seq 1 $PATHS_COUNT)
-        if [ $PATH[$i] = $CHTF_CURRENT ]
-            set -e PATH[$i]
-            break
-        end
-    end
+function _chtf_reset
+    test -z "$CHTF_CURRENT"; and return 0
+
+    set -g fish_user_paths (string match -v -- $CHTF_CURRENT $fish_user_paths)
 
     set -e CHTF_CURRENT
     set -e CHTF_CURRENT_TERRAFORM_VERSION
 end
 
 function _chtf_install
-   echo "chtf: Installing Terraform version $argv[1]"
-   brew cask install "terraform-$argv[1]"
- end
+    echo "chtf: Installing Terraform version $argv[1]"
+    brew cask install "terraform-$argv[1]"
+end
 
-function _chtf_use
-    set TF_VERSION $argv[1]
-    set TF_PATH "$CASKROOM/terraform-$TF_VERSION/$TF_VERSION"
-    if not test -d "$TF_PATH"
-        _chtf_install "$TF_VERSION" or return 1
+function _chtf_use -a tf_version
+    set -l tf_path $CASKROOM/terraform-$tf_version/$tf_version
+
+    if not test -d $tf_path
+        _chtf_install $tf_version; or return 1
     end
 
-    if not test -x "$TF_PATH/terraform"
+    if not test -x $tf_path/terraform
         echo "chtf: $tf_path/terraform not executable" >&2
         return 1
     end
 
-    if test -n $CHTF_CURRENT
-        _chtf_reset
-    end
+    _chtf_reset
 
-    set -gx CHTF_CURRENT "$TF_PATH"
-    set -gx CHTF_CURRENT_TERRAFORM_VERSION "$TF_VERSION"
-    set -x PATH "$CHTF_CURRENT" $PATH
+    set -gx CHTF_CURRENT $tf_path
+    set -gx CHTF_CURRENT_TERRAFORM_VERSION $tf_version
+    set -g fish_user_paths $CHTF_CURRENT $fish_user_paths
 end
 
 function _chtf_list
-    for dir in "$CASKROOM"/terraform-*/*
-        set TF_VERSION (basename "$dir")
-        if [ "$dir" = "$CHTF_CURRENT" ]
-            echo " * $TF_VERSION"
-        else
-            echo "   $TF_VERSION"
-        end
+    for dir in $CASKROOM/terraform-*/*
+        set -l prefix (_chtf_list_prefix $dir)
+        set -l tf_version (basename $dir)
+        echo -s $prefix $tf_version
     end
 end
 
-function chtf
-    # Fish treats empty list as a nonexistent value
-    #  this means we can't use empty value as a switch argument
-    #  so check for an empty value in advance
-    if test -z $argv[1]
-        _chtf_list
-        return
-    end
-
-    switch $argv[1]
-        case '-h' or '--help'
-            echo 'usage: chtf [<version> | system]'
-        case '-V' or '--version'
-            echo "chtf: $CHTF_VERSION"
-        case 'system'
-            _chtf_reset
-        case '*'
-            _chtf_use "$argv[1]"
+function _chtf_list_prefix -a dir
+    if test "$dir" = "$CHTF_CURRENT"
+        printf ' * '
+    else
+        printf '   '
     end
 end
