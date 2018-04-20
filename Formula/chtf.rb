@@ -6,7 +6,7 @@ class Chtf < Formula
 
   head 'https://github.com/Yleisradio/homebrew-terraforms.git'
 
-  option 'completions', 'Install shell command completions'
+  option 'with-completions', 'Install shell command completions'
 
   def install
     share.install 'chtf'
