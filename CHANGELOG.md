@@ -1,5 +1,9 @@
 # 1.3.1 / _Not released yet_
 
+* Add tab completion for bash, zsh, and fish
+* Get Caskroom location from Homebrew
+* Prefix private functions with underscore
+* Reformat the scripts a bit
 
 # 1.3.0 / 2017-11-06
 
