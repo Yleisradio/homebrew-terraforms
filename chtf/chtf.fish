@@ -24,7 +24,9 @@
 set -l chtf_version_file (dirname (status --current-filename))/VERSION
 set -g CHTF_VERSION (cat $chtf_version_file)
 
-test -n "$CASKROOM"; or set -g CASKROOM '/usr/local/Caskroom'
+if not set -q CASKROOM
+   set -g CASKROOM (brew --prefix)/Caskroom
+end
 
 function chtf
     switch "$argv[1]"
