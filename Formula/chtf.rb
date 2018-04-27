@@ -1,12 +1,13 @@
 class Chtf < Formula
   desc 'Terraform version switcher'
   homepage 'https://github.com/Yleisradio/homebrew-terraforms#readme'
-  url 'https://github.com/Yleisradio/homebrew-terraforms/archive/v1.3.0.tar.gz'
-  sha256 '31bf27a5ccab98942159a94a13c530e951deafb00c9b431535462003d8d7bdfe'
+
+  url 'https://github.com/Yleisradio/homebrew-terraforms/archive/v1.4.0.tar.gz'
+  sha256 '453fa62fa90ef4df08330c179a18b4a224867bc3444c44d2e2477efbb734ab34'
 
   head 'https://github.com/Yleisradio/homebrew-terraforms.git'
 
-  option 'with-completions', 'Install shell command completions'
+  option 'without-completions', 'Disable shell command completions'
 
   def install
     share.install 'chtf'
