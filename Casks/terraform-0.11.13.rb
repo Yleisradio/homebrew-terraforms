@@ -1,6 +1,6 @@
 cask 'terraform-0.11.13' do
   version '0.11.13'
-  sha256 '56b3b0313c41022e76e84f3dbf5045181f4fe3fc1005909a1cc97e6928bad35e'
+  sha256 'e9988443da39e5d81a5f7f1b6a5d97b25e2a1151d9be76cdc2e380df97e57856'
 
   url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_amd64.zip"
   name 'Terraform'
