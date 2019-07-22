@@ -38,7 +38,7 @@ If you wold like to default to a particular version so terraform when opening a 
 ```
 chtf 0.11.14
 ```
-to your .bashrc or .bash_profile.  This is handy for not having to pick a version every time you are in a
+to your .bashrc or .bash_profile after the above sourcing statements.  This is handy for not having to pick a version every time you are in a
 terraform repository and letting it default.
 
 You can also just install a specific Terraform version (but you'll need to use `chtf` or adjust `PATH` yourself to use it):
