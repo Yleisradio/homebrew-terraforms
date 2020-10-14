@@ -38,6 +38,12 @@ You can also just install a specific Terraform version (but you'll need to use `
 
     brew cask install terraform-0.6.9
 
+## Contibuting
+
+Bug reports, pull requests, and other contributions are welcome on GitHub at https://github.com/Yleisradio/homebrew-terraforms.
+
+This project is intended to be a safe, welcoming space for collaboration. By participating in this project you agree to abide by the terms of [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Credits
 
 Idea and implementation heavily affected by [chruby](https://github.com/postmodern/chruby).
