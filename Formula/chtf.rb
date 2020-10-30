@@ -5,7 +5,7 @@ class Chtf < Formula
   url 'https://github.com/Yleisradio/homebrew-terraforms/archive/v1.4.0.tar.gz'
   sha256 '453fa62fa90ef4df08330c179a18b4a224867bc3444c44d2e2477efbb734ab34'
 
-  head 'https://github.com/Yleisradio/homebrew-terraforms.git'
+  head 'https://github.com/Yleisradio/chtf.git'
 
   option 'without-completions', 'Disable shell command completions'
 
