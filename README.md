@@ -1,30 +1,32 @@
-# chtf - Terraform version switcher
+# homebrew-terraforms - Homebrew Casks for all Terraform versions
 
-This repository includes Homebrew Casks to install multiple Terraform versions (since 0.6.6) at the same time, and a `chtf` helper to specify which one to use. `chtf` also installs the specified version automatically if needed.
+This repository includes [Homebrew](https://brew.sh/) Casks to install multiple Terraform versions (since 0.6.6) at the same time. It also includes Homebrew Formula for [chtf][], a Terraform version switcher.
+
+**NOTE**: The `chtf` tool has been extracted to its own repository: [https://github.com/Yleisradio/chtf][chtf]. It can still be installed via this Tap and used as before. But now it also supports systems without Homebrew, also for auto-install.
+
+[chtf]: https://github.com/Yleisradio/chtf
 
 ## Usage
 
 Tap this repository:
 
-    brew tap Yleisradio/terraforms
+    brew tap yleisradio/terraforms
 
-Install the `chtf` helper:
+Install the [`chtf`](https://github.com/Yleisradio/chtf) helper:
 
     brew install chtf
 
-Add the following to the ~/.bashrc or ~/.zshrc file:
+For bash and zsh add the following to the `~/.bashrc` or `~/.zshrc` file:
 
 ```bash
-# Source chtf
 if [[ -f /usr/local/share/chtf/chtf.sh ]]; then
-    source "/usr/local/share/chtf/chtf.sh"
+    source /usr/local/share/chtf/chtf.sh
 fi
 ```
 
-If you are using fish add the following into ~/.config/fish/config.fish:
+For fish add the following into `~/.config/fish/config.fish`:
 
 ```fish
-# Source chtf
 if test -f /usr/local/share/chtf/chtf.fish
     source /usr/local/share/chtf/chtf.fish
 end
@@ -32,7 +34,7 @@ end
 
 Then select the wanted Terraform version to use with `chtf`.
 
-    chtf 0.11.3
+    chtf 0.11.5
 
 You can also just install a specific Terraform version (but you'll need to use `chtf` or adjust `PATH` yourself to use it):
 
@@ -43,7 +45,3 @@ You can also just install a specific Terraform version (but you'll need to use `
 Bug reports, pull requests, and other contributions are welcome on GitHub at https://github.com/Yleisradio/homebrew-terraforms.
 
 This project is intended to be a safe, welcoming space for collaboration. By participating in this project you agree to abide by the terms of [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Credits
-
-Idea and implementation heavily affected by [chruby](https://github.com/postmodern/chruby).
