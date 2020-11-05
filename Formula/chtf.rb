@@ -1,9 +1,9 @@
 class Chtf < Formula
   desc 'Terraform version switcher'
-  homepage 'https://github.com/Yleisradio/homebrew-terraforms#readme'
+  homepage 'https://github.com/Yleisradio/chtf#readme'
 
-  url 'https://github.com/Yleisradio/homebrew-terraforms/archive/v1.4.0.tar.gz'
-  sha256 '453fa62fa90ef4df08330c179a18b4a224867bc3444c44d2e2477efbb734ab34'
+  url 'https://github.com/Yleisradio/chtf/archive/v2.0.0.tar.gz'
+  sha256 '1a0d03c97fd4a48c748942e40fc10812846b3515cc08da5867cd85f206742933'
 
   head 'https://github.com/Yleisradio/chtf.git'
 
@@ -20,18 +20,17 @@ class Chtf < Formula
   end
 
   def caveats; <<~EOS
-    Add the following to the ~/.bashrc or ~/.zshrc file:
+    For bash and zsh add the following to the ~/.bashrc or ~/.zshrc file:
 
-        # Source chtf
         if [[ -f #{opt_share}/chtf/chtf.sh ]]; then
-            source "#{opt_share}/chtf/chtf.sh"
+            source #{opt_share}/chtf/chtf.sh
         fi
 
-    Then you can choose (and automatically install) a specified Terraform
-    version, e.g.:
+    For fish add the following into ~/.config/fish/config.fish:
 
-        chtf 0.11.3
-
+        if test -f #{opt_share}/chtf/chtf.fish
+            source #{opt_share}/chtf/chtf.fish
+        end
     EOS
   end
 end
