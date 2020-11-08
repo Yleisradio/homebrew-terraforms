@@ -1,6 +1,6 @@
 # homebrew-terraforms - Homebrew Casks for all Terraform versions
 
-This repository includes [Homebrew](https://brew.sh/) Casks to install multiple Terraform versions (since 0.6.6) at the same time. It also includes Homebrew Formula for [chtf][], a Terraform version switcher.
+This repository includes [Homebrew](https://brew.sh/) Casks to install multiple (or even all!) Terraform versions at the same time. It also includes Homebrew Formula for [chtf][], a Terraform version switcher.
 
 **NOTE**: The `chtf` tool has been extracted to its own repository: [https://github.com/Yleisradio/chtf][chtf]. It can still be installed via this Tap and used as before. But now it also supports systems without Homebrew, also for auto-install.
 
@@ -34,7 +34,7 @@ end
 
 Then select the wanted Terraform version to use with `chtf`.
 
-    chtf 0.11.5
+    chtf 0.13.5
 
 You can also just install a specific Terraform version (but you'll need to use `chtf` or adjust `PATH` yourself to use it):
 
