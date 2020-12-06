@@ -2,15 +2,20 @@ class Chtf < Formula
   desc "Terraform version switcher"
   homepage "https://github.com/Yleisradio/chtf#readme"
 
-  url "https://github.com/Yleisradio/chtf/archive/v2.0.0.tar.gz"
-  sha256 "1a0d03c97fd4a48c748942e40fc10812846b3515cc08da5867cd85f206742933"
+  url "https://github.com/Yleisradio/chtf/archive/v2.1.0.tar.gz"
+  sha256 "4709542940d82faf29eb5b22b835acc7f19c1af2f6581d95048b0c64d4c833aa"
+  license "MIT"
 
   head "https://github.com/Yleisradio/chtf.git"
 
   option "without-completions", "Disable shell command completions"
 
   def install
-    share.install "chtf"
+    pkgshare.install "chtf/chtf.sh"
+    pkgshare.install "chtf/__chtf_terraform-install.sh"
+
+    fish_function.install "chtf/chtf.fish"
+    fish_function.install_symlink pkgshare/"__chtf_terraform-install.sh"
 
     if build.with? "completions"
       bash_completion.install "etc/chtf-completion.bash" => "chtf"
@@ -23,15 +28,16 @@ class Chtf < Formula
     <<~EOS
       For bash and zsh add the following to the ~/.bashrc or ~/.zshrc file:
 
-          if [[ -f #{opt_share}/chtf/chtf.sh ]]; then
-              source #{opt_share}/chtf/chtf.sh
+          if [[ -f #{HOMEBREW_PREFIX}/share/chtf/chtf.sh ]]; then
+              source #{HOMEBREW_PREFIX}/share/chtf/chtf.sh
           fi
 
-      For fish add the following into ~/.config/fish/config.fish:
-
-          if test -f #{opt_share}/chtf/chtf.fish
-              source #{opt_share}/chtf/chtf.fish
-          end
+      chtf is autoloaded in fish, no need to `source` anything in config.fish
     EOS
+  end
+
+  test do
+    assert_equal "chtf: #{version}", shell_output("source #{HOMEBREW_PREFIX}/share/chtf/chtf.sh && chtf --version").strip
+    assert_equal "chtf: #{version}", shell_output("fish -c 'chtf --version'").strip
   end
 end
