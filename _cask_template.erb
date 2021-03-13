@@ -1,8 +1,16 @@
-cask 'terraform-<%= version %>' do
-  version '<%= version %>'
-  sha256 '<%= sha256 %>'
+cask "terraform-<%= version %>" do
+  version "<%= version %>"
 
-  url "<%= url.gsub(version, '#{version}') %>"
-  name 'Terraform'
-  homepage 'https://www.terraform.io/'
+  name "Terraform"
+  homepage "https://www.terraform.io/"
+
+  case Hardware::CPU.arch
+<% cask_builds.each do |build| -%>
+  when <%= build.cask_arch.inspect %>
+    url "<%= build.url %>"
+    sha256 "<%= build.sha256 %>"
+<% end -%>
+  end
+
+  depends_on arch: <%= cask_archs %>
 end
