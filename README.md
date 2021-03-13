@@ -16,7 +16,7 @@ Install the [`chtf`](https://github.com/Yleisradio/chtf) helper:
 
     brew install chtf
 
-For bash and zsh add the following to the `~/.bashrc` or `~/.zshrc` file:
+For **bash** and **zsh** add the following to the `~/.bashrc` or `~/.zshrc` file:
 
 ```bash
 if [[ -f /usr/local/share/chtf/chtf.sh ]]; then
@@ -24,17 +24,11 @@ if [[ -f /usr/local/share/chtf/chtf.sh ]]; then
 fi
 ```
 
-For fish add the following into `~/.config/fish/config.fish`:
-
-```fish
-if test -f /usr/local/share/chtf/chtf.fish
-    source /usr/local/share/chtf/chtf.fish
-end
-```
+The **fish** version is [autoloaded](https://fishshell.com/docs/current/tutorial.html#autoloading-functions) so there is nothing more to do!
 
 Then select the wanted Terraform version to use with `chtf`.
 
-    chtf 0.13.5
+    chtf 0.14.8
 
 You can also just install a specific Terraform version (but you'll need to use `chtf` or adjust `PATH` yourself to use it):
 
