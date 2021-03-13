@@ -1,8 +1,14 @@
-cask 'terraform-0.9.8' do
-  version '0.9.8'
-  sha256 'f2f4e12bcb6e8bbd8876194221fbb79860ad700926d47a42654a354d70b06022'
+cask "terraform-0.9.8" do
+  version "0.9.8"
 
-  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_amd64.zip"
-  name 'Terraform'
-  homepage 'https://www.terraform.io/'
+  name "Terraform"
+  homepage "https://www.terraform.io/"
+
+  case Hardware::CPU.arch
+  when :x86_64
+    url "https://releases.hashicorp.com/terraform/0.9.8/terraform_0.9.8_darwin_amd64.zip"
+    sha256 "f2f4e12bcb6e8bbd8876194221fbb79860ad700926d47a42654a354d70b06022"
+  end
+
+  depends_on arch: [:x86_64]
 end
