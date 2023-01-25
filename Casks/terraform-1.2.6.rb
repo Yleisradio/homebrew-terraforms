@@ -7,10 +7,10 @@ cask "terraform-1.2.6" do
   case Hardware::CPU.arch
   when :x86_64
     url "https://releases.hashicorp.com/terraform/1.2.6/terraform_1.2.6_darwin_amd64.zip"
-    sha256 "94d1efad05a06c879b9c1afc8a6f7acb2532d33864225605fc766ecdd58d9888"
+    sha256 "31a228531d9cbcd964ca1d5eb0e0d9a1484619627503dcc1ae2a2c63d50ae975"
   when :arm64
     url "https://releases.hashicorp.com/terraform/1.2.6/terraform_1.2.6_darwin_arm64.zip"
-    sha256 "452675f91cfe955a95708697a739d9b114c39ff566da7d9b31489064ceaaf66a"
+    sha256 "d8e13e67f7303f68ca66e882f715d2af80d0124c9511b78f5ce799236654dc8e"
   end
 
   depends_on arch: [:x86_64, :arm64]
