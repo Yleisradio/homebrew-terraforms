@@ -1,16 +1,23 @@
-cask "terraform-<%= version %>" do
-  version "<%= version %>"
-
+cask "terraform-<%= cask_version %>" do
   name "Terraform"
   homepage "https://www.terraform.io/"
 
-  case Hardware::CPU.arch
-<% cask_builds.each do |build| -%>
-  when <%= build.cask_arch.inspect %>
-    url "<%= build.url %>"
-    sha256 "<%= build.sha256 %>"
-<% end -%>
-  end
+  version "<%= version %>"
 
-  depends_on arch: <%= cask_archs %>
+  <%- if cask_builds.length == 1 -%>
+  arch = <%= cask_builds.first.arch.inspect %>
+  sha256 <%= cask_builds.first.sha256.inspect %>
+  <%- else -%>
+  arch <%= cask_builds.map { |build| "#{build.cask_arch}: #{build.arch.inspect}" }.join(", ") %>
+
+  sha256 <%= cask_builds.map { |build| "#{build.cask_arch}: #{build.sha256.inspect}" }.join(",\n    ") %>
+  <%- end -%>
+
+  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_#{arch}.zip",
+    verified: "releases.hashicorp.com/terraform"
+
+
+  # Binaries not installed as multiple versions are expected to coexist.
+  # Normally the wanted version is selected with `chtf`.
+  stage_only true
 end
