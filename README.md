@@ -32,9 +32,9 @@ Then select the wanted Terraform version to use with `chtf`.
 
 You can also just install a specific Terraform version (but you'll need to use `chtf` or adjust `PATH` yourself to use it):
 
-    brew install --cask terraform-0.6.9
+    brew install --cask terraform-0-6-9
 
-## Contibuting
+## Contributing
 
 Bug reports, pull requests, and other contributions are welcome on GitHub at https://github.com/Yleisradio/homebrew-terraforms.
 

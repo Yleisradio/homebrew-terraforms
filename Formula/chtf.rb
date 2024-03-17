@@ -2,8 +2,8 @@ class Chtf < Formula
   desc "Terraform version switcher"
   homepage "https://github.com/Yleisradio/chtf#readme"
 
-  url "https://github.com/Yleisradio/chtf/archive/v2.1.1.tar.gz"
-  sha256 "7eaa97ddc140dd8c928985e37f05c275419164724352552fb0838e1713a6749a"
+  url "https://github.com/Yleisradio/chtf/archive/refs/tags/v2.2.0.tar.gz"
+  sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   license "MIT"
 
   head "https://github.com/Yleisradio/chtf.git"
