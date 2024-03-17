@@ -12,7 +12,10 @@ CASK_DIR = ENV['CASK_DIR'] || 'Casks'
 CASK_TEMPLATE = ENV['CASK_TEMPLATE'] || '_cask_template.erb'
 
 CASK_OS = 'darwin'
-CASK_ARCHS = %i[x86_64 arm64].freeze
+CASK_ARCHS = {
+  'amd64' => 'intel',
+  'arm64' => 'arm'
+}.freeze
 
 RELEASES_BASE_URL = 'https://releases.hashicorp.com/terraform'
 
@@ -67,6 +70,10 @@ class TerraformReleases
       super
     end
 
+    def cask_version
+      Casks.cask_version(version)
+    end
+
     # Builds suitable for Casks
     def cask_builds
       @cask_builds ||= builds.select(&:cask_arch?).tap do |builds|
@@ -92,11 +99,11 @@ class TerraformReleases
     end
 
     def cask_arch?
-      os == CASK_OS && CASK_ARCHS.include?(cask_arch)
+      os == CASK_OS && CASK_ARCHS.keys.include?(arch)
     end
 
     def cask_arch
-      arch == 'amd64' ? :x86_64 : arch.to_sym
+      CASK_ARCHS[arch]
     end
 
     def sha256
@@ -166,18 +173,23 @@ end
 
 # Terraform Casks in this repository
 class Casks
+  def self.cask_version(version)
+      version.downcase.gsub(/[^@a-z0-9]+/, '-')
+  end
+
   def include?(version)
-    versions.include?(version)
+    versions.include?(Casks.cask_version(version))
   end
 
   def add(release)
-    cask_file = File.join(CASK_DIR, "terraform-#{release.version}.rb")
+    cask_file = File.join(CASK_DIR, "terraform-#{release.cask_version}.rb")
     IO.write(cask_file, template.result(release.binding))
   end
 
   def versions
     @versions ||= Dir.glob(File.join(CASK_DIR, 'terraform-*.rb')).map do |file|
-      File.basename(file, '.rb').sub(/^terraform-/, '')
+      v = File.basename(file, '.rb').sub(/^terraform-/, '')
+      Casks.cask_version(v)
     end
   end
 
