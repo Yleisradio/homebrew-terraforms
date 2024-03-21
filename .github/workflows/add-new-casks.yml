@@ -23,11 +23,11 @@ jobs:
         shell: bash
         run: |
           echo 'TF_VERSIONS<<EOF' >> $GITHUB_ENV
-          ./scripts/add_new_terraform_casks | while read version; do
+          ./scripts/add_new_terraform_casks | while read version path; do
             echo "Adding v$version"
             printf '* [v%s](https://github.com/hashicorp/terraform/releases/tag/v%s)\n' "$version" "$version" >> $GITHUB_ENV
 
-            git add "Casks/terraform-$version.rb"
+            git add "$path"
             git commit -m "Add Terraform v$version"
           done
           echo 'EOF' >> $GITHUB_ENV
