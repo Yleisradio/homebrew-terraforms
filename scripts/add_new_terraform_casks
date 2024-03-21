@@ -26,8 +26,8 @@ def add_new_terraform_casks
     next if !update_all? && casks.include?(version)
 
     begin
-      casks.add(releases[version])
-      puts version
+      path = casks.add(releases[version])
+      puts "#{version}\t#{path}"
     rescue TerraformReleases::VersionInfoError => e
       warn e.message
     end
@@ -182,8 +182,9 @@ class Casks
   end
 
   def add(release)
-    cask_file = File.join(CASK_DIR, "terraform-#{release.cask_version}.rb")
-    IO.write(cask_file, template.result(release.binding))
+    File.join(CASK_DIR, "terraform-#{release.cask_version}.rb").tap do |cask_file|
+      IO.write(cask_file, template.result(release.binding))
+    end
   end
 
   def versions
