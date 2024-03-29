@@ -17,12 +17,12 @@ Install the [`chtf`](https://github.com/Yleisradio/chtf) helper:
     brew install chtf
 
 For **bash** and **zsh** add the following to the `~/.bashrc` or `~/.zshrc` file:
-
 ```bash
-if [[ -f /usr/local/share/chtf/chtf.sh ]]; then
-    source /usr/local/share/chtf/chtf.sh
+if [[ -f "$(brew --prefix)/share/chtf/chtf.sh" ]]; then
+    source "$(brew --prefix)/share/chtf/chtf.sh"
 fi
 ```
+
 
 The **fish** version is [autoloaded](https://fishshell.com/docs/current/tutorial.html#autoloading-functions) so there is nothing more to do!
 
