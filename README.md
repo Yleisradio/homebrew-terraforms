@@ -18,9 +18,17 @@ Install the [`chtf`](https://github.com/Yleisradio/chtf) helper:
 
 For **bash** and **zsh** add the following to the `~/.bashrc` or `~/.zshrc` file:
 
+**Intel** Processor
 ```bash
 if [[ -f /usr/local/share/chtf/chtf.sh ]]; then
     source /usr/local/share/chtf/chtf.sh
+fi
+```
+
+**Apple Silicon** Processor
+```bash
+if [[ -f /opt/homebrew/share/chtf/chtf.sh ]]; then
+    source /opt/homebrew/share/chtf/chtf.sh
 fi
 ```
 
