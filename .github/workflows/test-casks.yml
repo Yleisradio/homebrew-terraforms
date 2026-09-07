@@ -6,6 +6,10 @@ on:
 permissions:
   contents: read
 
+env:
+  # Cask downloads are ~100 MB, so cap how many one job installs.
+  MAX_TESTED_CASKS: 3
+
 jobs:
   test_changed_casks:
     name: Test Changed Terraform Casks
@@ -19,14 +23,37 @@ jobs:
 
       - name: Get new and modified Cask files
         id: changed_casks
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           set -euo pipefail
-          BASE_REF="${{ github.base_ref }}"
           echo "Diffing against origin/${BASE_REF}"
-          files=$(git diff --name-only --diff-filter=AM origin/${BASE_REF}...HEAD -- 'Casks/*.rb')
+          all=$(git diff --name-only --diff-filter=AM "origin/${BASE_REF}...HEAD" -- 'Casks/*.rb')
+
+          total=0
+          [ -n "$all" ] && total=$(printf '%s\n' "$all" | wc -l | tr -d ' ')
+
+          # Test the newest versions.
+          selected=""
+          if [ "$total" -gt 0 ]; then
+            selected=$(
+              while IFS= read -r path; do
+                [ -z "$path" ] && continue
+                printf '%s\t%s\n' "$(awk -F'"' '/ version / {print $2; exit}' "$path")" "$path"
+              done <<< "$all" | sort -V -k1,1 | tail -n "$MAX_TESTED_CASKS" | cut -f2-
+            )
+          fi
+
+          tested=0
+          [ -n "$selected" ] && tested=$(printf '%s\n' "$selected" | wc -l | tr -d ' ')
+
+          echo "Changed Casks: $total, testing: $tested"
           {
+            echo "total=$total"
+            echo "tested=$tested"
+            echo "skipped=$(( total - tested ))"
             echo "files<<EOF"
-            echo "$files"
+            echo "$selected"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
@@ -35,10 +62,26 @@ jobs:
         run: |
           echo "No cask files in this PR. Skipping tests."
 
+      - name: Warn about untested Casks
+        if: ${{ steps.changed_casks.outputs.skipped != '0' }}
+        env:
+          TOTAL: ${{ steps.changed_casks.outputs.total }}
+          TESTED: ${{ steps.changed_casks.outputs.tested }}
+          SKIPPED: ${{ steps.changed_casks.outputs.skipped }}
+        run: |
+          set -euo pipefail
+          echo "::warning title=Not all Casks tested::Tested the ${TESTED} newest of ${TOTAL} changed Casks; ${SKIPPED} untested."
+          {
+            echo "### :warning: Not all Casks tested"
+            echo
+            echo "Tested the **${TESTED}** newest of **${TOTAL}** changed Casks; **${SKIPPED}** untested."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Test changed Casks
         if: ${{ steps.changed_casks.outputs.files }}
         env:
           CHTF_AUTO_INSTALL: "yes"
+          FILES: ${{ steps.changed_casks.outputs.files }}
         shell: bash
         run: |
           # Tap the local repository
@@ -60,4 +103,4 @@ jobs:
             terraform --version | grep "Terraform v$version"
 
             brew uninstall --cask "$cask_name"
-          done <<< "${{ steps.changed_casks.outputs.files }}"
+          done <<< "$FILES"
