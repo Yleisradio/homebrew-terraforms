@@ -1,0 +1,47 @@
+name: Check Casks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  # Homebrew's style and audit rules change independently of this repository.
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check_casks:
+    name: Check Casks
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Tap the local repository
+        run: brew tap "tmatilai/terraforms" "$(pwd)"
+
+      - name: Check style
+        run: brew style Casks Formula
+
+      - name: Audit Casks
+        run: brew audit --tap=tmatilai/terraforms
+
+      - name: Report a scheduled failure
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: Scheduled Cask checks are failing
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ -n "$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[].number')" ]; then
+            echo "An issue is already open."
+            exit 0
+          fi
+          gh issue create --title "$TITLE" \
+            --body "\`brew style\` or \`brew audit\` failed: $RUN_URL"
