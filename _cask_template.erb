@@ -1,21 +1,21 @@
 cask "terraform-<%= cask_version %>" do
-  name "Terraform"
-  homepage "https://www.terraform.io/"
+  <%- if cask_builds.length == 1 -%>
+  version "<%= version %>"
+  sha256 <%= cask_builds.first.sha256.inspect %>
+
+  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_<%= cask_builds.first.arch %>.zip"
+  <%- else -%>
+  <%- sorted = cask_builds.sort_by(&:cask_arch) -%>
+  <%- width = sorted.map { |build| build.cask_arch.length }.max + 1 -%>
+  arch <%= sorted.map { |build| "#{build.cask_arch}: #{build.arch.inspect}" }.join(", ") %>
 
   version "<%= version %>"
+  sha256 <%= sorted.map { |build| "#{"#{build.cask_arch}:".ljust(width)} #{build.sha256.inspect}" }.join(",\n         ") %>
 
-  <%- if cask_builds.length == 1 -%>
-  arch = <%= cask_builds.first.arch.inspect %>
-  sha256 <%= cask_builds.first.sha256.inspect %>
-  <%- else -%>
-  arch <%= cask_builds.map { |build| "#{build.cask_arch}: #{build.arch.inspect}" }.join(", ") %>
-
-  sha256 <%= cask_builds.map { |build| "#{build.cask_arch}: #{build.sha256.inspect}" }.join(",\n    ") %>
+  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_#{arch}.zip"
   <%- end -%>
-
-  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_#{arch}.zip",
-    verified: "releases.hashicorp.com/terraform"
-
+  name "Terraform"
+  homepage "https://www.terraform.io/"
 
   # Binaries not installed as multiple versions are expected to coexist.
   # Normally the wanted version is selected with `chtf`.

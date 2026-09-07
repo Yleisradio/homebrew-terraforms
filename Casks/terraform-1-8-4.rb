@@ -1,17 +1,13 @@
 cask "terraform-1-8-4" do
-  name "Terraform"
-  homepage "https://www.terraform.io/"
+  arch arm: "arm64", intel: "amd64"
 
   version "1.8.4"
+  sha256 arm:   "6a54d2862c8244febe6077a1fc6e9e6cc4e65eee8169049e77ce08df233cf49a",
+         intel: "5968872b07677829002d0a7ad34cf0c4cd02893a1c131e4ca30236442ceec445"
 
-  arch intel: "amd64", arm: "arm64"
-
-  sha256 intel: "5968872b07677829002d0a7ad34cf0c4cd02893a1c131e4ca30236442ceec445",
-    arm: "6a54d2862c8244febe6077a1fc6e9e6cc4e65eee8169049e77ce08df233cf49a"
-
-  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_#{arch}.zip",
-    verified: "releases.hashicorp.com/terraform"
-
+  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_#{arch}.zip"
+  name "Terraform"
+  homepage "https://www.terraform.io/"
 
   # Binaries not installed as multiple versions are expected to coexist.
   # Normally the wanted version is selected with `chtf`.

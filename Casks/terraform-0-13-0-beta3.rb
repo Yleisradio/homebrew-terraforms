@@ -1,15 +1,10 @@
 cask "terraform-0-13-0-beta3" do
-  name "Terraform"
-  homepage "https://www.terraform.io/"
-
   version "0.13.0-beta3"
-
-  arch = "amd64"
   sha256 "a4916de8ba4fd28699d4cdab540f9f58cc8941966d276c4ba12f4afdeffd029d"
 
-  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_#{arch}.zip",
-    verified: "releases.hashicorp.com/terraform"
-
+  url "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_darwin_amd64.zip"
+  name "Terraform"
+  homepage "https://www.terraform.io/"
 
   # Binaries not installed as multiple versions are expected to coexist.
   # Normally the wanted version is selected with `chtf`.
