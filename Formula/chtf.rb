@@ -10,6 +10,8 @@ class Chtf < Formula
 
   option "without-completions", "Disable shell command completions"
 
+  depends_on "fish" => :test
+
   def install
     pkgshare.install "chtf/chtf.sh"
     pkgshare.install "chtf/__chtf_terraform-install.sh"

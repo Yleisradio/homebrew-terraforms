@@ -21,6 +21,9 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+        with:
+          # Fetch all history to be able to diff against base branch
+          fetch-depth: 0
 
       - name: Tap the local repository
         run: brew tap "tmatilai/terraforms" "$(pwd)"
@@ -30,6 +33,45 @@ jobs:
 
       - name: Audit Casks
         run: brew audit --tap=tmatilai/terraforms
+
+      - name: Audit formulae
+        run: |
+          # `--tap` does not cover formulae, so audit them by name.
+          for f in Formula/*.rb; do
+            brew audit --formula "tmatilai/terraforms/$(basename "$f" .rb)"
+          done
+
+      - name: Get formulae to test
+        id: formulae
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          # Testing installs the formula, so on a pull request only test the
+          # changed ones. Scheduled runs test them all.
+          if [ "$EVENT" = "pull_request" ]; then
+            files=$(git diff --name-only --diff-filter=AM "origin/${BASE_REF}...HEAD" -- 'Formula/*.rb')
+          else
+            files=$(printf '%s\n' Formula/*.rb)
+          fi
+          {
+            echo "files<<EOF"
+            echo "$files"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Test formulae
+        if: ${{ steps.formulae.outputs.files }}
+        env:
+          FILES: ${{ steps.formulae.outputs.files }}
+        run: |
+          while IFS= read -r path; do
+            [ -z "$path" ] && continue
+            name="tmatilai/terraforms/$(basename "$path" .rb)"
+            brew install --formula "$name"
+            brew test "$name"
+          done <<< "$FILES"
 
       - name: Report a scheduled failure
         if: ${{ failure() && github.event_name == 'schedule' }}
