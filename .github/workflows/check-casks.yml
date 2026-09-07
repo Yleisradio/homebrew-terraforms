@@ -70,6 +70,8 @@ jobs:
             [ -z "$path" ] && continue
             name="tmatilai/terraforms/$(basename "$path" .rb)"
             brew install --formula "$name"
+            # `brew test` refuses to run unless test dependencies are installed.
+            brew install --only-dependencies --include-test --formula "$name"
             brew test "$name"
           done <<< "$FILES"
 
