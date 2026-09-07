@@ -2,8 +2,8 @@ class Chtf < Formula
   desc "Terraform version switcher"
   homepage "https://github.com/tmatilai/chtf#readme"
 
-  url "https://github.com/tmatilai/chtf/archive/refs/tags/v2.3.1.tar.gz"
-  sha256 "78b84654ca77c79c322b547598b5ddae17d3a10645a3a02cfe1ebb7d5fe72aba"
+  url "https://github.com/tmatilai/chtf/archive/refs/tags/v2.4.0.tar.gz"
+  sha256 "77c95e7a38104f51a2b09cfa20ede0f669efbe63b4039f2b41c156da9b870eb1"
   license "MIT"
 
   head "https://github.com/tmatilai/chtf.git"
