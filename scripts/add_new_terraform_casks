@@ -19,6 +19,8 @@ CASK_ARCHS = {
 
 RELEASES_BASE_URL = 'https://releases.hashicorp.com/terraform'
 
+VERSION_PATTERN = /\A\d+\.\d+\.\d+(-[a-z0-9.-]+)?\z/
+
 # Fetch all Terraform releases, and for each missing version add a Cask and
 # print out the version number.
 def add_new_terraform_casks
@@ -62,7 +64,7 @@ class TerraformReleases
       shasums_file = release_data.fetch('shasums')
       shasums = ShaSums.new("#{RELEASES_BASE_URL}/#{version}/#{shasums_file}")
 
-      @builds ||= release_data.fetch('builds').map { |build| Build.new(build, shasums) }
+      @builds = release_data.fetch('builds').map { |build| Build.new(build, shasums) }
     end
 
     # Make public for ERB
@@ -88,13 +90,12 @@ class TerraformReleases
 
   # One arch specific build
   class Build
-    attr_reader :version, :os, :arch, :url, :shasums
+    attr_reader :version, :os, :arch, :shasums
 
     def initialize(build_data, shasums)
       @version = build_data.fetch('version')
       @os      = build_data.fetch('os')
       @arch    = build_data.fetch('arch')
-      @url     = build_data.fetch('url')
       @shasums = shasums
     end
 
@@ -152,8 +153,12 @@ class TerraformReleases
     @versions ||= fetch_releases
   end
 
+  # Versions in ascending order. The strings end up in Ruby source, so only
+  # accept the expected format.
   def sorted
-    versions.keys.sort_by { |v| Gem::Version.new(v) }
+    valid, invalid = versions.keys.partition { |v| v.match?(VERSION_PATTERN) }
+    invalid.each { |v| warn "Skipping unexpected version #{v.inspect}" }
+    valid.sort_by { |v| Gem::Version.new(v) }
   end
 
   # Returns the specified release
@@ -174,7 +179,7 @@ end
 # Terraform Casks in this repository
 class Casks
   def self.cask_version(version)
-      version.downcase.gsub(/[^@a-z0-9]+/, '-')
+    version.downcase.gsub(/[^@a-z0-9]+/, '-')
   end
 
   def include?(version)
