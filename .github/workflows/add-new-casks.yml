@@ -8,12 +8,15 @@ on:
 permissions:
   contents: read
 
+concurrency: add-new-casks
+
 jobs:
   add_new_casks:
     name: Add New Terraform Casks
     # Only run on the main repo
     if: github.repository == 'tmatilai/homebrew-terraforms'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Generate token
         id: generate-token

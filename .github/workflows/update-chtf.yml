@@ -16,12 +16,15 @@ on:
 permissions:
   contents: read
 
+concurrency: update-chtf
+
 jobs:
   update_chtf:
     name: Update chtf
     # Only run on the main repo
     if: github.repository == 'tmatilai/homebrew-terraforms'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Generate token
         id: generate-token
