@@ -11,17 +11,26 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check_casks:
     name: Check Casks
     runs-on: macos-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       issues: write
+    env:
+      ISSUE_TITLE: Scheduled Cask checks are failing
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           # Fetch all history to be able to diff against base branch
           fetch-depth: 0
 
@@ -31,15 +40,8 @@ jobs:
       - name: Check style
         run: brew style Casks Formula
 
-      - name: Audit Casks
+      - name: Audit Casks and formulae
         run: brew audit --tap=tmatilai/terraforms
-
-      - name: Audit formulae
-        run: |
-          # `--tap` does not cover formulae, so audit them by name.
-          for f in Formula/*.rb; do
-            brew audit --formula "tmatilai/terraforms/$(basename "$f" .rb)"
-          done
 
       - name: Get formulae to test
         id: formulae
@@ -75,17 +77,27 @@ jobs:
             brew test "$name"
           done <<< "$FILES"
 
-      - name: Report a scheduled failure
-        if: ${{ failure() && github.event_name == 'schedule' }}
+      - name: Find an open failure issue
+        id: issue
+        if: ${{ always() && github.event_name == 'schedule' }}
         env:
           GH_TOKEN: ${{ github.token }}
-          TITLE: Scheduled Cask checks are failing
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
-          if [ -n "$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[].number')" ]; then
-            echo "An issue is already open."
-            exit 0
-          fi
-          gh issue create --title "$TITLE" \
-            --body "\`brew style\` or \`brew audit\` failed: $RUN_URL"
+          number=$(gh issue list --state open --search "in:title \"$ISSUE_TITLE\"" --json number --jq '.[0].number // empty')
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Report a scheduled failure
+        if: ${{ failure() && github.event_name == 'schedule' && !steps.issue.outputs.number }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --title "$ISSUE_TITLE" --body "Failed run: $RUN_URL"
+
+      - name: Close the failure issue
+        if: ${{ success() && steps.issue.outputs.number }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          gh issue close "$NUMBER" --comment "Passing again: $RUN_URL"

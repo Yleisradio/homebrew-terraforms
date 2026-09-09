@@ -6,6 +6,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   # Cask downloads are ~100 MB, so cap how many one job installs.
   MAX_TESTED_CASKS: 3
@@ -14,10 +18,12 @@ jobs:
   test_changed_casks:
     name: Test Changed Terraform Casks
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           # Fetch all history to be able to diff against base branch
           fetch-depth: 0
 

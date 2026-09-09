@@ -4,6 +4,8 @@
 require 'erb'
 require 'json'
 require 'net/http'
+require 'open3'
+require 'tmpdir'
 require 'uri'
 
 UPDATE_ALL = (ENV['UPDATE_ALL'] == 'yes')
@@ -19,6 +21,12 @@ CASK_ARCHS = {
 
 RELEASES_BASE_URL = 'https://releases.hashicorp.com/terraform'
 
+# Checksum files are verified against this HashiCorp signing key
+SIGNING_KEY = File.join(__dir__, 'hashicorp.asc')
+SIGNING_KEY_ID = '72D7468F'
+
+VERSION_PATTERN = /\A\d+\.\d+\.\d+(-[a-z0-9.-]+)?\z/
+
 # Fetch all Terraform releases, and for each missing version add a Cask and
 # print out the version number.
 def add_new_terraform_casks
@@ -32,6 +40,8 @@ def add_new_terraform_casks
       warn e.message
     end
   end
+rescue TerraformReleases::ReleasesError, TerraformReleases::SignatureError => e
+  abort e.message
 end
 
 def casks
@@ -52,17 +62,16 @@ class TerraformReleases
 
   class VersionInfoError < StandardError; end
 
+  class SignatureError < StandardError; end
+
   # One release version
   class Release
     attr_reader :version, :builds
 
     def initialize(release_data)
       @version = release_data.fetch('version')
-
-      shasums_file = release_data.fetch('shasums')
-      shasums = ShaSums.new("#{RELEASES_BASE_URL}/#{version}/#{shasums_file}")
-
-      @builds ||= release_data.fetch('builds').map { |build| Build.new(build, shasums) }
+      shasums = ShaSums.new(release_data)
+      @builds = release_data.fetch('builds').map { |build| Build.new(build, shasums) }
     end
 
     # Make public for ERB
@@ -88,13 +97,12 @@ class TerraformReleases
 
   # One arch specific build
   class Build
-    attr_reader :version, :os, :arch, :url, :shasums
+    attr_reader :version, :os, :arch, :shasums
 
     def initialize(build_data, shasums)
       @version = build_data.fetch('version')
       @os      = build_data.fetch('os')
       @arch    = build_data.fetch('arch')
-      @url     = build_data.fetch('url')
       @shasums = shasums
     end
 
@@ -111,12 +119,19 @@ class TerraformReleases
     end
   end
 
-  # Sha256sums for a Release
+  # Sha256sums for a Release, verified against SIGNING_KEY
   class ShaSums
-    attr_reader :url
+    attr_reader :version, :url, :signature_url
 
-    def initialize(url)
-      @url = url
+    def initialize(release_data)
+      @version = release_data.fetch('version')
+      base_url = "#{RELEASES_BASE_URL}/#{version}"
+      @url = "#{base_url}/#{release_data.fetch('shasums')}"
+
+      signature = release_data.fetch('shasums_signatures').find { |f| f.end_with?(".#{SIGNING_KEY_ID}.sig") }
+      raise SignatureError, "No signature by key #{SIGNING_KEY_ID} for v#{version}" unless signature
+
+      @signature_url = "#{base_url}/#{signature}"
     end
 
     def [](build)
@@ -134,11 +149,38 @@ class TerraformReleases
     end
 
     def fetch_shasums
+      sums = fetch(url)
+      verify_signature(sums, fetch(signature_url))
+      sums
+    end
+
+    def fetch(url)
       res = Net::HTTP.get_response(URI(url))
       return res.body if res.is_a?(Net::HTTPSuccess)
 
-      raise VersionInfoError,
-            "Failed to fetch sha256 sums from #{url}\n-> #{res.code} #{res.message}"
+      raise VersionInfoError, "Failed to fetch #{url}\n-> #{res.code} #{res.message}"
+    end
+
+    def verify_signature(data, signature)
+      Dir.mktmpdir do |dir|
+        data_file = File.join(dir, 'SHA256SUMS')
+        signature_file = "#{data_file}.sig"
+        File.binwrite(data_file, data)
+        File.binwrite(signature_file, signature)
+
+        output, status = Open3.capture2e('gpgv', '--keyring', Keyring.path, signature_file, data_file)
+        raise SignatureError, "Signature verification failed for v#{version}\n#{output}" unless status.success?
+      end
+    end
+  end
+
+  # SIGNING_KEY in the binary format gpgv requires
+  module Keyring
+    def self.path
+      @path ||= File.join(Dir.mktmpdir, 'keyring.gpg').tap do |keyring|
+        at_exit { FileUtils.remove_entry(File.dirname(keyring)) }
+        system('gpg', '--batch', '--dearmor', '--output', keyring, SIGNING_KEY, exception: true)
+      end
     end
   end
 
@@ -152,8 +194,12 @@ class TerraformReleases
     @versions ||= fetch_releases
   end
 
+  # Versions in ascending order. The strings end up in Ruby source, so only
+  # accept the expected format.
   def sorted
-    versions.keys.sort_by { |v| Gem::Version.new(v) }
+    valid, invalid = versions.keys.partition { |v| v.match?(VERSION_PATTERN) }
+    invalid.each { |v| warn "Skipping unexpected version #{v.inspect}" }
+    valid.sort_by { |v| Gem::Version.new(v) }
   end
 
   # Returns the specified release
@@ -174,7 +220,7 @@ end
 # Terraform Casks in this repository
 class Casks
   def self.cask_version(version)
-      version.downcase.gsub(/[^@a-z0-9]+/, '-')
+    version.downcase.gsub(/[^@a-z0-9]+/, '-')
   end
 
   def include?(version)
