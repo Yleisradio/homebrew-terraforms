@@ -79,10 +79,6 @@ jobs:
           sed -i "s|^  url .*|  url \"$url\"|; s|^  sha256 .*|  sha256 \"$sha\"|" Formula/chtf.rb
           git diff Formula/chtf.rb
 
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git commit -m "Update chtf to v${VERSION}" Formula/chtf.rb
-
       - name: Create or update the pull request
         if: steps.version.outputs.version
         env:
@@ -92,7 +88,10 @@ jobs:
         run: |
           set -euo pipefail
           gh auth setup-git
-          git push --force origin "HEAD:refs/heads/${BRANCH}"
+          git push --force origin "${GITHUB_SHA}:refs/heads/${BRANCH}"
+
+          # The ruleset requires signed commits, so commit through the API
+          ./scripts/create_commit "$BRANCH" "$GITHUB_SHA" "Update chtf to v${VERSION}" Formula/chtf.rb
 
           title="Update chtf to v${VERSION}"
           body="[Release notes](https://github.com/tmatilai/chtf/releases/tag/v${VERSION})

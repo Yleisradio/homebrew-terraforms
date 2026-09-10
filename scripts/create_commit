@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Commit working tree files onto a branch through the GitHub API. Such commits
+# are signed by GitHub and attributed to the token owner (the GitHub App).
+#
+# Usage: create_commit BRANCH EXPECTED_HEAD MESSAGE PATH...
+# Prints the new commit OID.
+set -euo pipefail
+
+branch=$1 head=$2 message=$3
+shift 3
+
+additions=$(for path in "$@"; do
+  jq -n --arg path "$path" --rawfile contents "$path" '{path: $path, contents: ($contents | @base64)}'
+done | jq -s .)
+
+jq -n --arg repo "$GITHUB_REPOSITORY" --arg branch "$branch" --arg head "$head" \
+      --arg message "$message" --argjson additions "$additions" '{
+  query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }",
+  variables: { input: {
+    branch: { repositoryNameWithOwner: $repo, branchName: $branch },
+    expectedHeadOid: $head,
+    message: { headline: $message },
+    fileChanges: { additions: $additions }
+  } }
+}' | gh api graphql --input - --jq '.data.createCommitOnBranch.commit.oid'
