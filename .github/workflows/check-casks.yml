@@ -40,6 +40,14 @@ jobs:
       - name: Check style
         run: brew style Casks Formula
 
+      - name: Lint workflows
+        env:
+          # Online audits check action pins against GitHub
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          brew install zizmor
+          zizmor .github/workflows
+
       - name: Audit Casks and formulae
         run: brew audit --tap=tmatilai/terraforms
 
